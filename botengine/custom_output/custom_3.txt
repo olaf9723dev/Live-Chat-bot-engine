@@ -1,0 +1,1 @@
+{"id": 3, "quiz": ["What about your VoIP services?"], "responseHtml": "Our VoIP service costs $20 per month and includes unlimited calls, voicemail, and caller ID. It\u2019s a great addition if you need reliable phone service with your internet."}

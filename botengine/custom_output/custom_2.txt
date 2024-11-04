@@ -1,0 +1,1 @@
+{"id": 2, "quiz": ["Can you tell me more about the Advance package?"], "responseHtml": "Absolutely! The Advance package provides 100Mb of speed, perfect for streaming HD videos, gaming, and handling multiple devices. It costs $75 per month. Would you like to proceed with this package?"}

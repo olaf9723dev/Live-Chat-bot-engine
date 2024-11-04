@@ -1,0 +1,1 @@
+{"id": 1, "quiz": ["Hello, I need help choosing an internet package. What options do you have?"], "responseHtml": "Hello! We offer four internet packages: Starter (50Mb), Advance (100Mb), Supreme (150Mb), and Ultimate (200Mb). Which one would you like more details about?"}

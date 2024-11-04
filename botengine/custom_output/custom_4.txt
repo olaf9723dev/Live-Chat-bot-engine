@@ -1,0 +1,1 @@
+{"id": 4, "quiz": ["Sounds good! How do I sign up?"], "responseHtml": "Great choice! To sign up, I can direct you to our sign-up page, or you can speak with one of our representatives to get started. Which option works best for you?"}
