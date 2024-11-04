@@ -1,7 +1,9 @@
 import os
+import json
 import scrapy
 import html2text
 from urllib.parse import urljoin
+import mysql.connector
 # >>> scrapy crawl airmaxcm
 
 class AirmaxcmSpider(scrapy.Spider):
@@ -31,6 +33,14 @@ class AirmaxcmSpider(scrapy.Spider):
         self.converter.body_width = 0
         self.urls = []
 
+        self.connection = mysql.connector.connect(
+            port=3306,
+            user="dbadmin",  
+            password="password",  
+            database="livehelp_db",
+            host="srv590123.hstgr.cloud"
+        )
+
     def parse(self, response):
         text = self.converter.handle(response.body.decode())
         text = text.replace("<|endoftext|>", " ")
@@ -44,7 +54,36 @@ class AirmaxcmSpider(scrapy.Spider):
             href = link.get()
             if href.startswith("/wireless/index.php"):
                 url = urljoin(response.url, href)
+                self.urls.append(url)
                 yield scrapy.Request(url, callback=self.parse)
+        
+        self.update_crawled_urls()
+
+    def update_crawled_urls(self):
+        cursor = self.connection.cursor(dictionary=True)
+        data_string = json.dumps(self.urls)
+
+        check_query = "SELECT * FROM livehelp_settings WHERE name = %s"
+        cursor.execute(check_query, ("crawled_urls",))
+        result = cursor.fetchone()
+        if result:
+            update_query = """
+                UPDATE livehelp_settings
+                SET value = %s
+                WHERE name = %s
+            """
+            cursor.execute(update_query, (data_string, "crawled_urls"))
+        else:
+            insert_query = """
+                INSERT INTO livehelp_settings (name, value)
+                VALUES (%s, %s)
+            """
+            cursor.execute(insert_query, ("crawled_urls", data_string))
+        
+        self.connection.commit()
+        
+        cursor.close()
+        self.connection.close()
 
 if __name__ == "__main__":
     AirmaxcmSpider()

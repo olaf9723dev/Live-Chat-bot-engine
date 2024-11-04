@@ -11,10 +11,10 @@ from dotenv import load_dotenv, find_dotenv
 class SiteTrain:
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.crawl_site()
-        
+
     def start(self):
         try:
+            self.crawl_site()
             loader = DirectoryLoader(
                 "botengine/airmaxcmcrawl/output/",
                 glob="**/*.txt",
@@ -50,7 +50,3 @@ class SiteTrain:
     def crawl_site(self):
         commands = "cd /home/ubuntu/chatbot_api/botengine/airmaxcmcrawl; scrapy crawl airmaxcm"
         result = subprocess.run(commands, shell=True, capture_output=True, text=True)
-    
-        print(result.stdout)
-
-
