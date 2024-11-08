@@ -8,15 +8,33 @@ from langchain.memory import ConversationBufferMemory
 import warnings
 from openai import OpenAI as open_AI
 from dotenv import load_dotenv, find_dotenv
+import mysql.connector
 
-load_dotenv(find_dotenv())
+          
 PERSIST_DIRECTORY = "botengine/db"
 warnings.filterwarnings("ignore", category=DeprecationWarning)
-CLIENT = open_AI(api_key= os.getenv('OPENAI_API_KEY'))
+
 
 class BotAnswer:
     def __init__(self, question):
         self.question = question
+        connection = mysql.connector.connect(
+                port=3306,
+                user="dbadmin",  
+                password="password",  
+                database="livehelp_db",
+                host="srv590123.hstgr.cloud"
+            )
+        cursor = connection.cursor(dictionary=True)
+        select_query = "SELECT * FROM livehelp_settings WHERE name = %s"
+        query_value = ("OpenAIKey",)
+        cursor.execute(select_query, query_value)
+        result = cursor.fetchone()
+
+        openaikey  = result['value']
+
+        self.CLIENT = open_AI(api_key= openaikey)
+        os.environ['OPENAI_API_KEY'] = openaikey
 
     def start(self):
         question = self.question
@@ -26,7 +44,7 @@ class BotAnswer:
 
     def get_pre_answer(self, question="Hi"):
         try:
-            completion = CLIENT.chat.completions.create(
+            completion = self.CLIENT.chat.completions.create(
                     model="gpt-4",
                     messages=[
                         {

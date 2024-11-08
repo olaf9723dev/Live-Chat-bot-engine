@@ -6,11 +6,26 @@ from langchain.document_loaders import DirectoryLoader, TextLoader
 
 import os
 import subprocess
+import mysql.connector
 from dotenv import load_dotenv, find_dotenv
 
 class SiteTrain:
     def __init__(self):
-        load_dotenv(find_dotenv())
+        connection = mysql.connector.connect(
+                port=3306,
+                user="dbadmin",  
+                password="password",  
+                database="livehelp_db",
+                host="srv590123.hstgr.cloud"
+            )
+        cursor = connection.cursor(dictionary=True)
+        select_query = "SELECT * FROM livehelp_settings WHERE name = %s"
+        query_value = ("OpenAIKey",)
+        cursor.execute(select_query, query_value)
+        result = cursor.fetchone()
+
+        openaikey  = result['value']
+        os.environ['OPENAI_API_KEY'] = openaikey
 
     def start(self):
         try:
